@@ -14,7 +14,7 @@
     "deploy": "npm run build:gh-pages && node deploy.js",
     "deploy:cjs": "npm run build:gh-pages && node deploy.cjs",
     "deploy:ps": "powershell -ExecutionPolicy Bypass -File deploy.ps1",
-    "build:gh-pages": "cross-env NODE_ENV=production npm run build"
+    "build:gh-pages": "cross-env NODE_ENV=production npm run build && node scripts/post-build.js"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.0.2",

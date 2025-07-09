@@ -26,6 +26,43 @@ try {
     Write-Host "📁 Copying build files..." -ForegroundColor Yellow
     Copy-Item -Path "$distDir\*" -Destination $tempDir -Recurse -Force
     
+    # Ensure 404.html exists for SPA routing
+    $notFoundPath = Join-Path $tempDir "404.html"
+    if (-not (Test-Path $notFoundPath)) {
+        Write-Host "📄 Creating 404.html for SPA routing..." -ForegroundColor Yellow
+        $notFoundContent = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GazNetCAD - Газовые сети</title>
+    <script type="text/javascript">
+        // Single Page Apps for GitHub Pages
+        // MIT License
+        // https://github.com/rafgraph/spa-github-pages
+        // This script takes the current url and converts the path and query
+        // string into just a query string, and then redirects the browser
+        // to the new url with only a query string and hash fragment.
+        var pathSegmentsToKeep = 1;
+
+        var l = window.location;
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+            l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+    </script>
+</head>
+<body>
+    Redirecting to GazNetCAD...
+</body>
+</html>
+"@
+        Set-Content -Path $notFoundPath -Value $notFoundContent -Encoding UTF8
+    }
+    
     # Change to temp directory
     Push-Location $tempDir
     
