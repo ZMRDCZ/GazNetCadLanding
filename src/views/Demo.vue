@@ -376,6 +376,8 @@ const pipelineElements = ref([
     roughness: 0.01,
     flowRate: 150,
     pressureLoss: 0.002,
+    velocity: 0,
+    reynolds: 0,
     connections: []
   },
   {
@@ -387,6 +389,8 @@ const pipelineElements = ref([
     diameter: 110,
     material: 'steel',
     isOpen: true,
+    velocity: 0,
+    reynolds: 0,
     connections: []
   },
   {
@@ -401,6 +405,8 @@ const pipelineElements = ref([
     roughness: 0.01,
     flowRate: 150,
     pressureLoss: 0.003,
+    velocity: 0,
+    reynolds: 0,
     connections: []
   }
 ])
@@ -489,7 +495,21 @@ const errors = ref([])
 const isDrawing = ref(false)
 const drawingStart = ref({ x: 0, y: 0 })
 const currentLine = ref(null)
-const connections = ref([])
+const connections = ref<Array<{
+  id: string;
+  start: any;
+  end: any;
+  segments: Array<{
+    id: string;
+    start: any;
+    end: any;
+    isWaypoint: boolean;
+    hasCollision: boolean;
+  }>;
+  waypoints?: any[];
+  hasCollision: boolean;
+  isFlowing: boolean;
+}>>([])
 const measurements = ref([])
 const isDragging = ref(false)
 const dragElement = ref(null)
@@ -638,10 +658,11 @@ function handleCanvasMouseUp(event: MouseEvent) {
   if (isDrawing.value && currentLine.value) {
     // Завершаем рисование линии
     const connection = {
-      id: Date.now(),
+      id: Date.now().toString(),
       start: currentLine.value.start,
       end: currentLine.value.end,
       segments: [],
+      waypoints: [],
       hasCollision: false,
       isFlowing: false
     }
@@ -686,6 +707,8 @@ function addPipe(x: number, y: number) {
     roughness: 0.01,
     flowRate: 100,
     pressureLoss: 0.001,
+    velocity: 0,
+    reynolds: 0,
     connections: []
   })
 }
@@ -700,6 +723,8 @@ function addValve(x: number, y: number) {
     diameter: 110,
     material: 'steel',
     isOpen: true,
+    velocity: 0,
+    reynolds: 0,
     connections: []
   })
 }
@@ -1170,8 +1195,8 @@ function addLog(type: string, message: string) {
 }
 
 // --- Обновлённые стили для элементов ---
-function getObstacleStyle(obstacle: any) {
-  const baseStyle = {
+function getObstacleStyle(obstacle: any): Record<string, string | number> {
+  const baseStyle: Record<string, string | number> = {
     position: 'absolute',
     border: '2px solid',
     borderRadius: '4px',
@@ -1186,7 +1211,7 @@ function getObstacleStyle(obstacle: any) {
   }
   
   if (obstacle.type === 'building') {
-    const buildingStyle = {
+    const buildingStyle: Record<string, string | number> = {
       ...baseStyle,
       left: `${obstacle.x}px`,
       top: `${obstacle.y}px`,
@@ -1207,7 +1232,7 @@ function getObstacleStyle(obstacle: any) {
     
     return buildingStyle
   } else if (obstacle.type === 'tree') {
-    const treeStyle = {
+    const treeStyle: Record<string, string | number> = {
       ...baseStyle,
       left: `${obstacle.x - obstacle.radius}px`,
       top: `${obstacle.y - obstacle.radius}px`,
@@ -1229,7 +1254,7 @@ function getObstacleStyle(obstacle: any) {
     
     return treeStyle
   } else if (obstacle.type === 'underground') {
-    const undergroundStyle = {
+    const undergroundStyle: Record<string, string | number> = {
       ...baseStyle,
       left: `${obstacle.x}px`,
       top: `${obstacle.y}px`,
@@ -1254,7 +1279,7 @@ function getObstacleStyle(obstacle: any) {
   return baseStyle
 }
 
-function getConnectionStyle(path: any) {
+function getConnectionStyle(path: any): Record<string, string | number> {
   if (path.waypoints && path.waypoints.length > 2) {
     return {
       position: 'absolute',
@@ -1263,7 +1288,7 @@ function getConnectionStyle(path: any) {
     }
   }
   
-  const baseStyle = {
+  const baseStyle: Record<string, string | number> = {
     position: 'absolute',
     height: '2px',
     background: 'linear-gradient(90deg, #00d4ff 0%, #0099cc 100%)',
@@ -1294,7 +1319,7 @@ function getConnectionStyle(path: any) {
   return baseStyle
 }
 
-function getDrawingLineStyle(line: any) {
+function getDrawingLineStyle(line: any): Record<string, string | number> {
   if (!line) return {}
   
   const dx = line.end.x - line.start.x
@@ -1311,7 +1336,7 @@ function getDrawingLineStyle(line: any) {
   }
 }
 
-function getSegmentStyle(segment: any) {
+function getSegmentStyle(segment: any): Record<string, string | number> {
   const dx = segment.end.x - segment.start.x
   const dy = segment.end.y - segment.start.y
   const length = Math.sqrt(dx * dx + dy * dy)
@@ -1347,8 +1372,8 @@ function getSegmentStyle(segment: any) {
   }
 }
 
-function getElementStyle(element: any) {
-  const baseStyle = {
+function getElementStyle(element: any): Record<string, string | number> {
+  const baseStyle: Record<string, string | number> = {
     left: `${element.x}px`,
     top: `${element.y}px`,
     position: 'absolute',
@@ -1369,38 +1394,30 @@ function getElementStyle(element: any) {
       justifyContent: 'center',
       fontSize: '12px',
       fontWeight: '600',
-      color: '#000',
-      boxShadow: '0 0 15px rgba(0, 212, 255, 0.3)',
-      border: '2px solid transparent'
+      color: '#fff',
+      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+      boxShadow: '0 2px 8px rgba(0, 212, 255, 0.3)'
     }
   } else if (element.type === 'valve') {
-    const valveColor = element.isOpen ? 
-      'linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%)' : 
-      'linear-gradient(135deg, #ff4757 0%, #ff3742 100%)'
-    
-    const valveShadow = element.isOpen ? 
-      '0 0 15px rgba(255, 107, 107, 0.3)' : 
-      '0 0 20px rgba(255, 71, 87, 0.5)'
-    
     return {
       ...baseStyle,
-      width: '30px',
-      height: '30px',
-      background: valveColor,
+      width: '40px',
+      height: '40px',
+      background: element.isOpen ? 'linear-gradient(135deg, #00ff88 0%, #00cc6a 100%)' : 'linear-gradient(135deg, #ff4757 0%, #ff6b6b 100%)',
       borderRadius: '50%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '16px',
-      boxShadow: valveShadow,
-      border: '2px solid transparent'
+      fontSize: '20px',
+      boxShadow: element.isOpen ? '0 0 20px rgba(0, 255, 136, 0.5)' : '0 0 20px rgba(255, 71, 87, 0.5)',
+      border: '2px solid #fff'
     }
   }
   
   return baseStyle
 }
 
-function getMeasurementStyle(measurement: any) {
+function getMeasurementStyle(measurement: any): Record<string, string | number> {
   const dx = measurement.end.x - measurement.start.x
   const dy = measurement.end.y - measurement.start.y
   const length = Math.sqrt(dx * dx + dy * dy)
@@ -1460,7 +1477,7 @@ function calculateAll() {
       // Суммируем общие показатели
       totalFlowRate += results.flowRate
       totalPressureLoss += results.pressureLoss
-      totalLength += element.length
+      totalLength += (element.length as number) || 0
       maxVelocity = Math.max(maxVelocity, results.velocity)
       maxReynolds = Math.max(maxReynolds, results.reynolds)
     }
@@ -1469,8 +1486,8 @@ function calculateAll() {
   // Обновляем общие результаты
   calculationResults.value = {
     flowRate: Math.round(totalFlowRate),
-    velocity: maxVelocity.toFixed(2),
-    pressureLoss: totalPressureLoss.toFixed(4),
+    velocity: Number(maxVelocity.toFixed(2)),
+    pressureLoss: Number(totalPressureLoss.toFixed(4)),
     reynolds: Math.round(maxReynolds)
   }
   
@@ -1592,10 +1609,10 @@ function updateCalculationTable() {
     .map((pipe, index) => ({
       id: index + 1,
       name: pipe.name,
-      length: pipe.length,
+      length: (pipe.length as number) || 0,
       diameter: pipe.diameter,
-      flowRate: pipe.flowRate || 0,
-      pressureLoss: pipe.pressureLoss || 0
+      flowRate: (pipe.flowRate as number) || 0,
+      pressureLoss: (pipe.pressureLoss as number) || 0
     }))
 }
 
@@ -1679,8 +1696,7 @@ function exportAsPNG() {
   // Используем html2canvas для создания PNG
   import('html2canvas').then(html2canvas => {
     html2canvas.default(canvas, {
-      backgroundColor: '#0a0a0a',
-      scale: 2,
+      background: '#0a0a0a',
       useCORS: true,
       allowTaint: true
     }).then(canvas => {
@@ -1924,6 +1940,11 @@ function createSVGMeasurement(measurement: any) {
 
 // --- Импорт проектов ---
 function importProject() {
+  loadProject()
+  showExportMenu.value = false
+}
+
+function loadProject() {
   const input = document.createElement('input')
   input.type = 'file'
   input.accept = '.json'
@@ -1935,9 +1956,9 @@ function importProject() {
         try {
           const projectData = JSON.parse(e.target?.result as string)
           loadProjectData(projectData)
-          addLog('success', 'Проект импортирован')
+          addLog('success', 'Проект загружен')
         } catch (error) {
-          addLog('error', 'Ошибка импорта проекта')
+          addLog('error', 'Ошибка загрузки проекта')
         }
       }
       reader.readAsText(file)
@@ -2017,14 +2038,21 @@ onMounted(() => {
 // --- Улучшенная отрисовка сегментов и соединений ---
 function createConnectionSegments(start: any, end: any, waypoints: any[] = []) {
   const points = [start, ...waypoints, end]
-  const segments = []
+  const segments: Array<{
+    id: string;
+    start: any;
+    end: any;
+    isWaypoint: boolean;
+    hasCollision: boolean;
+  }> = []
   
   for (let i = 0; i < points.length - 1; i++) {
     const segment = {
       id: `segment-${Date.now()}-${i}`,
       start: points[i],
       end: points[i + 1],
-      isWaypoint: i > 0 && i < points.length - 2
+      isWaypoint: i > 0 && i < points.length - 2,
+      hasCollision: false
     }
     
     // Проверяем коллизии для каждого сегмента
@@ -2234,6 +2262,28 @@ function getElementStateStyle(element: any, state: string) {
   }
 }
 
+// --- Обновлённые методы для экспорта/сохранения ---
+function saveProject() {
+  const projectData = {
+    pipelineElements: pipelineElements.value,
+    obstacles: obstacles.value,
+    connections: connections.value,
+    measurements: measurements.value,
+    projectParams: projectParams.value,
+    calculationResults: calculationResults.value,
+    timestamp: new Date().toISOString()
+  }
+  
+  const dataString = JSON.stringify(projectData, null, 2)
+  const dataBlob = new Blob([dataString], { type: 'application/json' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(dataBlob)
+  link.download = `gaznetcad-project-${new Date().toISOString().split('T')[0]}.json`
+  link.click()
+  
+  addLog('success', 'Проект сохранён')
+  showExportMenu.value = false
+}
 
 </script> 
 
