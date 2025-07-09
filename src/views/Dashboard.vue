@@ -298,6 +298,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 @import '@/styles/tokens.scss';
 
 .demo-app {
@@ -310,13 +312,14 @@ onMounted(() => {
   color: $color-text-primary;
 }
 
-/* Demo Banner */
+/* Modern Demo Banner */
 .demo-banner {
-  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-  color: $color-text-on-primary;
+  @include glass-effect(0.95);
+  border-bottom: 1px solid rgba($primary, 0.2);
   padding: 0.75rem 0;
   position: relative;
   z-index: 200;
+  box-shadow: $shadow-sm;
 }
 
 .banner-content {
@@ -330,16 +333,22 @@ onMounted(() => {
 }
 
 .demo-label {
-  font-weight: $font-weight-bold;
-  font-size: $font-size-sm;
+  color: $secondary;
+  font-weight: $font-semibold;
+  font-size: $text-sm;
+  background: rgba($secondary, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: $radius-full;
+  border: 1px solid rgba($secondary, 0.3);
 }
 
 .demo-text {
-  font-size: $font-size-sm;
+  font-size: $text-sm;
+  color: $dark-text-secondary;
 }
 
 .upgrade-btn {
-  @include button-neon($color-background, $color-primary);
+  @include modern-button($primary);
   
   &.full-width {
     width: 100%;
@@ -350,7 +359,7 @@ onMounted(() => {
   }
   
   &.primary {
-    @include button-neon($color-secondary, $color-text-on-primary);
+    @include modern-button($secondary);
   }
 }
 
@@ -375,7 +384,7 @@ onMounted(() => {
   }
 }
 
-/* KPI Section */
+/* Modern KPI Section */
 .kpi-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -383,11 +392,9 @@ onMounted(() => {
   margin-bottom: $space-6;
   
   .kpi-item {
-    @include card-neon;
-    padding: $space-6;
+    @include modern-card();
     text-align: center;
     position: relative;
-    overflow: hidden;
     
     &::before {
       content: '';
@@ -395,24 +402,24 @@ onMounted(() => {
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, $color-primary, $color-secondary);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, $primary, transparent);
     }
     
     h3 {
-      font-size: $font-size-sm;
-      color: $color-text-secondary;
+      font-size: $text-sm;
+      color: $dark-text-secondary;
       margin-bottom: $space-2;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      font-weight: $font-medium;
     }
     
     .kpi-value {
-      font-size: $font-size-4xl;
-      font-weight: $font-weight-bold;
-      @include neon-text($color-primary);
+      font-size: $text-4xl;
+      font-weight: $font-bold;
+      @include text-gradient;
       margin: 0;
-      animation: neon-pulse $neon-pulse-duration infinite;
     }
   }
 }

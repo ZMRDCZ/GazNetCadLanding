@@ -61,11 +61,11 @@
               
               <div class="metric-card">
                 <div class="metric-header">
-                  <span class="metric-icon">💰</span>
-                  <span class="metric-trend positive">+32%</span>
+                  <span class="metric-icon">📊</span>
+                  <span class="metric-trend positive">+15%</span>
                 </div>
-                <div class="metric-value">{{ metrics.costSavings }}₽</div>
-                <div class="metric-label">Экономия средств</div>
+                <div class="metric-value">{{ metrics.costSavings }}</div>
+                <div class="metric-label">Выполнено проектов</div>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ const filters = reactive({
 const metrics = reactive({
   productivity: 85,
   avgTime: 14.5,
-  costSavings: 340000
+  costSavings: 15
 })
 
 const performanceData = ref([

@@ -1,0 +1,486 @@
+// ==========================================
+// MODERN LANDING PAGE STYLES - GAZNETCAD
+// ==========================================
+
+@import './variables.scss';
+@import './mixins.scss';
+
+// Landing page base styles
+.landing-page {
+  min-height: 100vh;
+  background: $dark-bg;
+  color: $dark-text-primary;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+// Container utility
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  
+  @media (max-width: 640px) {
+    padding: 0 16px;
+  }
+}
+
+// Section spacing
+section {
+  padding: 80px 0;
+  
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 40px 0;
+  }
+}
+
+// Typography
+.section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  
+  &:not(.no-gradient) {
+    @include text-gradient($primary, $secondary);
+  }
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: $dark-text-secondary;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+// Text gradient utility
+.text-gradient {
+  @include text-gradient($primary, $secondary);
+}
+
+// Button base styles
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  
+  .icon, svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  // Sizes
+  &.btn-small {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    
+    .icon, svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  &.btn-large {
+    padding: 16px 32px;
+    font-size: 1.125rem;
+    
+    .icon, svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  // Variants
+  &.btn-primary {
+    @include modern-button($primary);
+  }
+  
+  &.btn-secondary {
+    background: rgba($secondary, 0.1);
+    border: 1px solid rgba($secondary, 0.3);
+    color: $secondary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($secondary, 0.2);
+      border-color: $secondary;
+      transform: translateY(-2px);
+      @include subtle-glow($secondary);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  &.btn-outline {
+    background: transparent;
+    border: 1px solid rgba($dark-text-secondary, 0.3);
+    color: $dark-text-secondary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($primary, 0.1);
+      border-color: $primary;
+      color: $primary;
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  &.btn-ghost {
+    background: transparent;
+    border: none;
+    color: $dark-text-secondary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($primary, 0.1);
+      color: $primary;
+    }
+  }
+}
+
+// Card styles
+.card {
+  @include modern-card(true);
+  
+  &.card-flat {
+    box-shadow: none;
+    border: 1px solid $dark-border;
+    
+    &:hover {
+      transform: none;
+      box-shadow: $shadow-sm;
+    }
+  }
+  
+  &.card-bordered {
+    border: 1px solid rgba($primary, 0.2);
+    
+    &:hover {
+      border-color: rgba($primary, 0.4);
+    }
+  }
+}
+
+// Status indicators
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  
+  &.status-success {
+    background: $secondary;
+    box-shadow: 0 0 8px rgba($secondary, 0.5);
+  }
+  
+  &.status-warning {
+    background: $orange-500;
+    box-shadow: 0 0 8px rgba($orange-500, 0.5);
+  }
+  
+  &.status-error {
+    background: $red-500;
+    box-shadow: 0 0 8px rgba($red-500, 0.5);
+  }
+  
+  &.status-info {
+    background: $primary;
+    box-shadow: 0 0 8px rgba($primary, 0.5);
+  }
+}
+
+// Badge component
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  
+  &.badge-primary {
+    background: rgba($primary, 0.1);
+    color: $primary;
+    border: 1px solid rgba($primary, 0.2);
+  }
+  
+  &.badge-secondary {
+    background: rgba($secondary, 0.1);
+    color: $secondary;
+    border: 1px solid rgba($secondary, 0.2);
+  }
+  
+  &.badge-success {
+    background: rgba($secondary, 0.1);
+    color: $secondary;
+  }
+  
+  &.badge-warning {
+    background: rgba($orange-500, 0.1);
+    color: $orange-500;
+  }
+  
+  &.badge-error {
+    background: rgba($red-500, 0.1);
+    color: $red-500;
+  }
+}
+
+// Grid utilities
+.grid {
+  display: grid;
+  gap: 24px;
+  
+  &.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  &.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  &.grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+// Flex utilities
+.flex {
+  display: flex;
+  
+  &.flex-center {
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &.flex-between {
+    justify-content: space-between;
+  }
+  
+  &.flex-col {
+    flex-direction: column;
+  }
+  
+  &.flex-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+// Spacing utilities
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-6 { gap: 24px; }
+.gap-8 { gap: 32px; }
+.gap-12 { gap: 48px; }
+.gap-16 { gap: 64px; }
+
+// Text utilities
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: $primary; }
+.text-secondary { color: $secondary; }
+.text-success { color: $secondary; }
+.text-warning { color: $orange-500; }
+.text-error { color: $red-500; }
+.text-muted { color: $dark-text-muted; }
+
+// Background utilities
+.bg-surface { background: $dark-surface; }
+.bg-surface-2 { background: $dark-surface-2; }
+
+// Responsive utilities
+.hidden-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.hidden-desktop {
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}
+
+// Animation utilities
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out;
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+// Hover effects
+.hover-lift {
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    @include subtle-glow($primary);
+  }
+}
+
+// Focus styles
+.focus-ring {
+  &:focus-visible {
+    outline: none;
+    @include focus-ring($primary);
+  }
+}
+
+// Loading states
+.loading {
+  position: relative;
+  color: transparent !important;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid rgba($primary, 0.3);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Overlay
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($dark-bg, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark-surface;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba($primary, 0.3);
+  border-radius: 4px;
+  
+  &:hover {
+    background: rgba($primary, 0.5);
+  }
+}
+
+// Selection styling
+::selection {
+  background: rgba($primary, 0.3);
+  color: $dark-text-primary;
+}
+
+::-moz-selection {
+  background: rgba($primary, 0.3);
+  color: $dark-text-primary;
+}
+
+// Print styles
+@media print {
+  .landing-page {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .btn, .card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+} 

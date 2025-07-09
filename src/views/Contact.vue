@@ -6,7 +6,7 @@
         <div class="hero-content">
           <h1 class="hero-title">Свяжитесь с нами</h1>
           <p class="hero-subtitle">
-            Готовы ответить на ваши вопросы и помочь выбрать оптимальное решение для ваших задач
+            Готовы ответить на ваши вопросы о демонстрационной системе GazNetCAD
           </p>
         </div>
       </div>
@@ -76,7 +76,7 @@
                 >
                   <option value="">Выберите тему</option>
                   <option value="demo">Запрос демонстрации</option>
-                  <option value="pricing">Вопросы по тарифам</option>
+                  <option value="demo">Запрос демонстрации</option>
                   <option value="technical">Техническая поддержка</option>
                   <option value="partnership">Партнёрство</option>
                   <option value="integration">Интеграция</option>
@@ -116,7 +116,7 @@
                 <label class="checkbox-label">
                   <input type="checkbox" v-model="form.newsletter" />
                   <span class="checkbox-custom"></span>
-                  Подписаться на новости и обновления продукта
+                  Подписаться на новости и обновления
                 </label>
               </div>
               
@@ -203,7 +203,7 @@
                 </div>
               </div>
               <p class="hours-note">
-                Техническая поддержка работает круглосуточно для клиентов корпоративного тарифа
+                Техническая поддержка доступна в рабочее время
               </p>
             </div>
             
@@ -238,14 +238,14 @@
     <section class="cta-section">
       <div class="container">
         <div class="cta-content">
-          <h2>Готовы начать?</h2>
-          <p>Попробуйте GazNetCAD бесплатно уже сегодня</p>
+          <h2>Готовы попробовать демо?</h2>
+          <p>Попробуйте GazNetCAD уже сегодня</p>
           <div class="cta-actions">
             <button class="btn-primary" @click="$router.push('/demo')">
               Запустить демо
             </button>
-            <button class="btn-secondary" @click="$router.push('/pricing')">
-              Посмотреть тарифы
+            <button class="btn-secondary" @click="$router.push('/documentation')">
+              Документация
             </button>
           </div>
         </div>

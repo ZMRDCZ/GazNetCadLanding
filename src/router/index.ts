@@ -1,22 +1,22 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
       name: 'landing',
       component: () => import('@/views/Landing.vue'),
       meta: {
-        title: 'GazNetCAD - Профессиональное проектирование газовых сетей'
+        title: 'GazNetCAD - Демонстрация проектирования газовых сетей'
       }
     },
     {
       path: '/demo',
       name: 'demo',
-      component: () => import('@/views/Dashboard.vue'),
+      component: () => import('@/views/Demo.vue'),
       meta: {
-        title: 'GazNetCAD - Демо версия',
+        title: 'GazNetCAD - Калькулятор трубопровода',
         requiresDemo: true
       }
     },
@@ -45,14 +45,6 @@ const router = createRouter({
       meta: {
         title: 'GazNetCAD - Настройки',
         requiresAuth: true
-      }
-    },
-    {
-      path: '/pricing',
-      name: 'pricing',
-      component: () => import('@/views/Pricing.vue'),
-      meta: {
-        title: 'GazNetCAD - Тарифы и цены'
       }
     },
     {

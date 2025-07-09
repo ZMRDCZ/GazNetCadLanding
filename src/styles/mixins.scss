@@ -1,0 +1,700 @@
+// ==========================================
+// SCSS Mixins for GazNetCAD
+// ==========================================
+
+@import './variables.scss';
+
+// ==========================================
+// NEON THEME MIXINS
+// ==========================================
+
+// Dark theme mixin
+@mixin dark-theme {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+  
+  [data-theme="dark"] & {
+    @content;
+  }
+}
+
+// Neon text effect
+@mixin neon-text($color: $neon-primary) {
+  color: $color;
+  text-shadow: 0 0 10px rgba($color, 0.5);
+  transition: text-shadow 0.3s ease;
+  
+  &:hover {
+    text-shadow: 0 0 20px rgba($color, 0.8);
+  }
+}
+
+// Neon border effect
+@mixin neon-border($color: $neon-primary) {
+  border: 1px solid rgba($color, 0.3);
+  transition: border-color 0.3s ease;
+  
+  &:hover {
+    border-color: rgba($color, 0.6);
+  }
+  
+  &:focus {
+    border-color: $color;
+    box-shadow: 0 0 0 3px rgba($color, 0.2);
+  }
+}
+
+// Neon glow effect
+@mixin neon-glow($color: $neon-primary, $intensity: 0.5) {
+  box-shadow: 0 0 20px rgba($color, $intensity);
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 0 30px rgba($color, $intensity + 0.2);
+  }
+}
+
+// Neon pulse animation
+@mixin neon-pulse($color: $neon-primary) {
+  animation: neonPulse 2s ease-in-out infinite;
+  
+  @keyframes neonPulse {
+    0%, 100% { 
+      box-shadow: 0 0 10px rgba($color, 0.3);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba($color, 0.8);
+    }
+  }
+}
+
+// Neon button effect
+@mixin neon-button($color: $neon-primary) {
+  background: rgba($color, 0.1);
+  border: 1px solid rgba($color, 0.3);
+  color: $color;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba($color, 0.2);
+    border-color: rgba($color, 0.6);
+    box-shadow: 0 0 15px rgba($color, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Modern button effects
+@mixin modern-button($color: $primary) {
+  background: $color;
+  border: 1px solid $color;
+  color: white;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: $shadow-sm;
+  
+  &:hover {
+    background: darken($color, 8%);
+    border-color: darken($color, 8%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-lg, 0 4px 14px 0 rgba($color, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color, 0.2), 0 0 0 4px rgba($color, 0.05), $shadow-md;
+  }
+}
+
+// Modern glass effect
+@mixin glass-effect($opacity: 0.8) {
+  background: rgba($dark-surface, $opacity);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba($gray-700, 0.6);
+}
+
+// Modern card effect
+@mixin modern-card($hover: true) {
+  @include glass-effect(0.8);
+  border-radius: $radius-2xl;
+  padding: $space-6;
+  box-shadow: $shadow-md;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  @if $hover {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: $shadow-xl;
+      background: rgba($dark-surface, 0.9);
+    }
+  }
+}
+
+// Subtle glow effect
+@mixin subtle-glow($color: $primary, $intensity: 0.15) {
+  box-shadow: 0 4px 14px 0 rgba($color, $intensity);
+}
+
+// Modern text gradient
+@mixin text-gradient($from: $blue-600, $to: $purple-600) {
+  background: linear-gradient(135deg, $from 0%, $to 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Professional focus ring
+@mixin focus-ring($color: $primary) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($color, 0.2), 0 0 0 4px rgba($color, 0.05);
+}
+
+// Holographic effect
+@mixin holographic {
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba($neon-primary, 0.1) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: holographic 3s ease-in-out infinite;
+  
+  @keyframes holographic {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+}
+
+// Floating animation
+@mixin float-animation($duration: 3s) {
+  animation: float $duration ease-in-out infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+// Glitch effect
+@mixin glitch-effect {
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  &::before {
+    animation: glitch 0.3s infinite;
+    color: $neon-red;
+    z-index: -1;
+  }
+  
+  &::after {
+    animation: glitch 0.3s infinite reverse;
+    color: $neon-primary;
+    z-index: -2;
+  }
+  
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+}
+
+// Circuit board pattern
+@mixin circuit-pattern {
+  background-image: 
+    linear-gradient(90deg, rgba($neon-primary, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba($neon-primary, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20px 20px, rgba($neon-primary, 0.2) 2px, transparent 2px);
+    background-size: 40px 40px;
+  }
+}
+
+// Matrix rain effect
+@mixin matrix-bg {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($neon-green, 0.1) 50%,
+      transparent 100%
+    );
+    animation: matrixRain 8s linear infinite;
+    z-index: 0;
+  }
+  
+  @keyframes matrixRain {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50%); }
+  }
+}
+
+// Responsive breakpoints
+@mixin breakpoint($size) {
+  @if map-has-key($breakpoints, $size) {
+    $breakpoint: map-get($breakpoints, $size);
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$size}";
+  }
+}
+
+// Container
+@mixin container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-4;
+  
+  @include breakpoint(sm) {
+    padding: 0 $space-8;
+  }
+  
+  @include breakpoint(lg) {
+    padding: 0 $space-16;
+  }
+  
+  @include breakpoint(xl) {
+    padding: 0 $space-20;
+  }
+  
+  @include breakpoint(xxl) {
+    padding: 0 $space-24;
+  }
+}
+
+// Grid system
+@mixin grid($cols: 1, $gap: $space-6) {
+  display: grid;
+  grid-template-columns: repeat($cols, 1fr);
+  gap: $gap;
+}
+
+@mixin grid-responsive {
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+  
+  @include breakpoint(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include breakpoint(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+// Button styles
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-3 $space-6;
+  border: none;
+  border-radius: $radius-lg;
+  font-weight: 600;
+  font-size: $text-base;
+  cursor: pointer;
+  transition: all $transition-normal;
+  text-decoration: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-primary {
+  @include btn-base;
+  background: linear-gradient(135deg, $blue-600, $purple-600);
+  color: white;
+  box-shadow: $shadow-lg;
+  
+  &:hover:not(:disabled) {
+    box-shadow: $shadow-xl;
+    transform: translateY(-2px);
+  }
+}
+
+@mixin btn-secondary {
+  @include btn-base;
+  background: transparent;
+  color: $gray-700;
+  border: 2px solid $gray-300;
+  
+  &:hover:not(:disabled) {
+    border-color: $blue-500;
+    color: $blue-500;
+  }
+}
+
+@mixin btn-large {
+  padding: $space-4 $space-8;
+  font-size: $text-lg;
+}
+
+// Card styles
+@mixin card {
+  background: white;
+  border-radius: $radius-xl;
+  padding: $space-6;
+  box-shadow: $shadow-lg;
+  border: 1px solid $gray-200;
+  
+  &:hover {
+    box-shadow: $shadow-xl;
+  }
+}
+
+// Input styles
+@mixin input-base {
+  width: 100%;
+  padding: $space-3 $space-4;
+  border: 1px solid $gray-300;
+  border-radius: $radius-lg;
+  background: white;
+  color: $gray-900;
+  font-size: $text-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $blue-500;
+    box-shadow: 0 0 0 3px rgba($blue-500, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+// Gradient backgrounds
+@mixin gradient-primary {
+  background: linear-gradient(135deg, $blue-600, $purple-600);
+}
+
+@mixin gradient-surface {
+  background: linear-gradient(135deg, $gray-50, $blue-50);
+}
+
+// Text styles
+@mixin text-gradient {
+  background: linear-gradient(135deg, $blue-600, $purple-600);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Animations
+@mixin animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@mixin animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@mixin animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@mixin animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Animations keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Section spacing
+@mixin section {
+  padding: $space-20 0;
+}
+
+// Hover effects
+@mixin hover-lift {
+  transition: transform $transition-normal, box-shadow $transition-normal;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+// ==========================================
+// ENHANCED RESPONSIVE MIXINS
+// ==========================================
+
+// Mobile-first responsive breakpoints
+@mixin mobile-up {
+  @media (min-width: $bp-xs) {
+    @content;
+  }
+}
+
+@mixin mobile-lg-up {
+  @media (min-width: $bp-sm) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $bp-md) {
+    @content;
+  }
+}
+
+@mixin laptop-up {
+  @media (min-width: $bp-lg) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: $bp-xl) {
+    @content;
+  }
+}
+
+@mixin desktop-lg-up {
+  @media (min-width: $bp-xxl) {
+    @content;
+  }
+}
+
+// Desktop-first responsive breakpoints (max-width)
+@mixin desktop-lg-down {
+  @media (max-width: #{$bp-xxl - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop-down {
+  @media (max-width: #{$bp-xl - 1px}) {
+    @content;
+  }
+}
+
+@mixin laptop-down {
+  @media (max-width: #{$bp-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-down {
+  @media (max-width: #{$bp-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-lg-down {
+  @media (max-width: #{$bp-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-down {
+  @media (max-width: #{$bp-xs - 1px}) {
+    @content;
+  }
+}
+
+// Range breakpoints (between two breakpoints)
+@mixin mobile-only {
+  @media (min-width: $bp-xs) and (max-width: #{$bp-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @media (min-width: $bp-md) and (max-width: #{$bp-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin laptop-only {
+  @media (min-width: $bp-lg) and (max-width: #{$bp-xl - 1px}) {
+    @content;
+  }
+}
+
+// Custom breakpoint mixin
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Container responsive mixin
+@mixin container-responsive {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $space-4;
+  
+  @include mobile-lg-up {
+    padding: 0 $space-6;
+    max-width: $container-sm;
+  }
+  
+  @include tablet-up {
+    max-width: $container-md;
+  }
+  
+  @include laptop-up {
+    max-width: $container-lg;
+    padding: 0 $space-8;
+  }
+  
+  @include desktop-up {
+    max-width: $container-xl;
+  }
+  
+  @include desktop-lg-up {
+    max-width: $container-xxl;
+  }
+}
+
+// Responsive grid mixin
+@mixin grid-responsive($mobile: 1, $tablet: 2, $laptop: 3, $desktop: 4) {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: repeat($mobile, 1fr);
+  
+  @include tablet-up {
+    grid-template-columns: repeat($tablet, 1fr);
+    gap: $space-6;
+  }
+  
+  @include laptop-up {
+    grid-template-columns: repeat($laptop, 1fr);
+  }
+  
+  @include desktop-up {
+    grid-template-columns: repeat($desktop, 1fr);
+    gap: $space-8;
+  }
+}
+
+// Responsive font sizes
+@mixin font-responsive($mobile, $desktop) {
+  font-size: $mobile;
+  
+  @include laptop-up {
+    font-size: $desktop;
+  }
+}
+
+// Responsive spacing
+@mixin padding-responsive($mobile, $desktop) {
+  padding: $mobile;
+  
+  @include laptop-up {
+    padding: $desktop;
+  }
+}
+
+@mixin margin-responsive($mobile, $desktop) {
+  margin: $mobile;
+  
+  @include laptop-up {
+    margin: $desktop;
+  }
+} 

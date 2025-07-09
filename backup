@@ -509,34 +509,6 @@ function zoomOut() {
   zoom.value = Math.max(zoom.value - 0.1, 0.2)
 }
 
-// --- Анимации CSS ---
-const animations = {
-  pulse: {
-    animation: 'pulse 2s infinite'
-  },
-  flow: {
-    animation: 'flow 3s infinite'
-  },
-  glow: {
-    animation: 'glow 1.5s ease-in-out infinite alternate'
-  },
-  bounce: {
-    animation: 'bounce 1s infinite'
-  }
-}
-
-// --- Применение анимаций к элементам ---
-function applyAnimation(element: any, animationName: string) {
-  element.animationClass = animationName
-  element.animationStyle = animations[animationName] || {}
-  
-  // Удаляем анимацию через время
-  setTimeout(() => {
-    element.animationClass = null
-    element.animationStyle = {}
-  }, 3000)
-}
-
 // --- Выбор элемента ---
 function selectElement(element: any) {
   selectedElement.value = element
@@ -935,9 +907,6 @@ function generateWaypoint(start: any, end: any, obstacle: any): any {
 function generateBuildingWaypoint(x1: number, y1: number, x2: number, y2: number, building: any): any {
   const { x: bx, y: by, width: bw, height: bh } = building
   
-  // Увеличенный отступ для зданий (высокий приоритет)
-  const baseOffset = 50
-  
   // Находим ближайший угол здания к линии
   const corners = [
     { x: bx, y: by },                    // левый верхний
@@ -957,131 +926,54 @@ function generateBuildingWaypoint(x1: number, y1: number, x2: number, y2: number
     }
   }
   
-  // Определяем направление обхода
-  const centerX = bx + bw / 2
-  const centerY = by + bh / 2
-  
-  // Если линия проходит выше здания - обходим сверху
-  if (y1 < centerY && y2 < centerY) {
-    return { 
-      x: Math.round(centerX), 
-      y: Math.round(by - baseOffset - 20) 
-    }
-  }
-  // Если линия проходит ниже здания - обходим снизу
-  else if (y1 > centerY && y2 > centerY) {
-    return { 
-      x: Math.round(centerX), 
-      y: Math.round(by + bh + baseOffset + 20) 
-    }
-  }
-  // Если линия проходит слева от здания - обходим слева
-  else if (x1 < centerX && x2 < centerX) {
-    return { 
-      x: Math.round(bx - baseOffset - 20), 
-      y: Math.round(centerY) 
-    }
-  }
-  // Если линия проходит справа от здания - обходим справа
-  else if (x1 > centerX && x2 > centerX) {
-    return { 
-      x: Math.round(bx + bw + baseOffset + 20), 
-      y: Math.round(centerY) 
-    }
-  }
-  
-  // По умолчанию - обходим через ближайший угол с увеличенным отступом
+  // Добавляем отступ от угла
+  const offset = 20
   const dx = bestCorner.x - x1
   const dy = bestCorner.y - y1
   const distance = Math.sqrt(dx * dx + dy * dy)
   
   if (distance > 0) {
-    const waypointX = bestCorner.x + (dx / distance) * (baseOffset + 30)
-    const waypointY = bestCorner.y + (dy / distance) * (baseOffset + 30)
+    const waypointX = bestCorner.x + (dx / distance) * offset
+    const waypointY = bestCorner.y + (dy / distance) * offset
     return { x: Math.round(waypointX), y: Math.round(waypointY) }
   }
   
-  return { x: bestCorner.x + baseOffset + 30, y: bestCorner.y + baseOffset + 30 }
+  return { x: bestCorner.x + offset, y: bestCorner.y + offset }
 }
 
 function generateTreeWaypoint(x1: number, y1: number, x2: number, y2: number, tree: any): any {
   const { x: tx, y: ty, radius } = tree
-  
-  // Средний отступ для деревьев
-  const baseOffset = 35
   
   // Находим точку на окружности, ближайшую к линии
   const dx = x2 - x1
   const dy = y2 - y1
   const length = Math.sqrt(dx * dx + dy * dy)
   
-  if (length === 0) return { x: tx + radius + baseOffset, y: ty }
+  if (length === 0) return { x: tx + radius + 10, y: ty }
   
   const unitX = dx / length
   const unitY = dy / length
   
-  // Создаём два waypoint'а для более плавного обхода дерева
-  const waypoint1 = {
-    x: Math.round(tx + unitX * (radius + baseOffset)),
-    y: Math.round(ty + unitY * (radius + baseOffset))
-  }
+  // Точка на окружности в направлении линии
+  const waypointX = tx + unitX * (radius + 15)
+  const waypointY = ty + unitY * (radius + 15)
   
-  // Второй waypoint для создания дуги обхода
-  const perpendicularX = -unitY
-  const perpendicularY = unitX
-  
-  const waypoint2 = {
-    x: Math.round(waypoint1.x + perpendicularX * (radius + 15)),
-    y: Math.round(waypoint1.y + perpendicularY * (radius + 15))
-  }
-  
-  // Возвращаем ближайший к начальной точке waypoint
-  const dist1 = Math.sqrt((waypoint1.x - x1) ** 2 + (waypoint1.y - y1) ** 2)
-  const dist2 = Math.sqrt((waypoint2.x - x1) ** 2 + (waypoint2.y - y1) ** 2)
-  
-  return dist1 < dist2 ? waypoint1 : waypoint2
+  return { x: Math.round(waypointX), y: Math.round(waypointY) }
 }
 
 function generateUndergroundWaypoint(x1: number, y1: number, x2: number, y2: number, underground: any): any {
   const { x: ux, y: uy, width: uw, height: uh } = underground
   
-  // Большой отступ для подземных труб (высокий приоритет)
-  const baseOffset = 60
-  
+  // Для подземных труб создаём waypoint выше или ниже
   const centerY = uy + uh / 2
-  const centerX = ux + uw / 2
+  const offset = 25
   
-  // Определяем направление линии относительно подземной трубы
-  const lineAngle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI
-  
-  // Если линия более горизонтальная - обходим сверху/снизу
-  if (Math.abs(lineAngle) < 45 || Math.abs(lineAngle) > 135) {
-    if (y1 < centerY) {
-      // Линия выше подземной трубы - обходим сверху с большим отступом
-      return { 
-        x: Math.round(centerX), 
-        y: Math.round(uy - baseOffset - 30) 
-      }
-    } else {
-      // Линия ниже подземной трубы - обходим снизу с большим отступом
-      return { 
-        x: Math.round(centerX), 
-        y: Math.round(uy + uh + baseOffset + 30) 
-      }
-    }
+  if (y1 < centerY) {
+    // Линия выше подземной трубы - обходим сверху
+    return { x: ux + uw / 2, y: uy - offset }
   } else {
-    // Если линия более вертикальная - обходим слева/справа
-    if (x1 < centerX) {
-      return { 
-        x: Math.round(ux - baseOffset - 30), 
-        y: Math.round(centerY) 
-      }
-    } else {
-      return { 
-        x: Math.round(ux + uw + baseOffset + 30), 
-        y: Math.round(centerY) 
-      }
-    }
+    // Линия ниже подземной трубы - обходим снизу
+    return { x: ux + uw / 2, y: uy + uh + offset }
   }
 }
 
@@ -2024,7 +1916,10 @@ function createConnectionSegments(start: any, end: any, waypoints: any[] = []) {
       id: `segment-${Date.now()}-${i}`,
       start: points[i],
       end: points[i + 1],
-      isWaypoint: i > 0 && i < points.length - 2
+      isWaypoint: i > 0 && i < points.length - 2,
+      isFinal: i === points.length - 2,
+      hasCollision: false,
+      flowDirection: 'forward'
     }
     
     // Проверяем коллизии для каждого сегмента
@@ -2234,7 +2129,129 @@ function getElementStateStyle(element: any, state: string) {
   }
 }
 
+// --- Обновлённые методы для работы с элементами ---
+function selectElement(element: any) {
+  selectedElement.value = element
+  
+  // Добавляем анимацию выбора
+  applyAnimation(element, 'glow')
+  
+  addLog('info', `Выбран элемент: ${element.name}`)
+}
 
+function toggleValve(element: any) {
+  if (element.type === 'valve') {
+    element.isOpen = !element.isOpen
+    
+    // Добавляем анимацию переключения
+    applyAnimation(element, element.isOpen ? 'glow' : 'pulse')
+    
+    addLog('info', `Клапан ${element.name} ${element.isOpen ? 'открыт' : 'закрыт'}`)
+    
+    // Пересчитываем гидравлику
+    calculateAll()
+  }
+}
+
+// --- Улучшенная обработка событий мыши ---
+function handleElementMouseEnter(element: any) {
+  element.isHovered = true
+}
+
+function handleElementMouseLeave(element: any) {
+  element.isHovered = false
+}
+
+function handleElementClick(element: any) {
+  selectElement(element)
+  
+  if (element.type === 'valve') {
+    toggleValve(element)
+  }
+}
+
+// --- Стили для лейблов ---
+function getLabelStyle(element: any, type: string) {
+  const baseStyle = {
+    position: 'absolute',
+    background: 'rgba(0, 0, 0, 0.8)',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '10px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
+    pointerEvents: 'none',
+    zIndex: 30
+  }
+  
+  if (type === 'obstacle') {
+    return {
+      ...baseStyle,
+      color: element.color,
+      top: '-25px',
+      left: '50%',
+      transform: 'translateX(-50%)'
+    }
+  } else if (type === 'measurement') {
+    return {
+      ...baseStyle,
+      color: '#00ff88',
+      top: '-20px',
+      left: '50%',
+      transform: 'translateX(-50%)'
+    }
+  } else if (type === 'reroute') {
+    return {
+      ...baseStyle,
+      color: '#00ff88',
+      top: '-20px',
+      left: '50%',
+      transform: 'translateX(-50%)'
+    }
+  }
+  
+  return baseStyle
+}
+
+// --- Анимации CSS ---
+const animations = {
+  pulse: {
+    animation: 'pulse 2s infinite'
+  },
+  flow: {
+    animation: 'flow 3s infinite'
+  },
+  glow: {
+    animation: 'glow 1.5s ease-in-out infinite alternate'
+  },
+  bounce: {
+    animation: 'bounce 1s infinite'
+  }
+}
+
+// --- Применение анимаций к элементам ---
+function applyAnimation(element: any, animationName: string) {
+  element.animationClass = animationName
+  element.animationStyle = animations[animationName] || {}
+  
+  // Удаляем анимацию через время
+  setTimeout(() => {
+    element.animationClass = null
+    element.animationStyle = {}
+  }, 3000)
+}
+
+// --- Подсветка элементов при наведении ---
+function getHoverStyle(element: any) {
+  const baseStyle = getElementStyle(element)
+  
+  return {
+    ...baseStyle,
+    transform: 'scale(1.1)',
+    zIndex: 20,
+    ...getNeonEffect('#00d4ff', 2)
+  }
+}
 </script> 
 
 <style scoped>

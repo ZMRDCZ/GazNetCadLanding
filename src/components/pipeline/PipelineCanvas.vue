@@ -650,9 +650,44 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  background: $scene-background;
-  border-radius: $radius-lg;
+  background: linear-gradient(145deg, #0a0f1c 0%, #1a1a2e 50%, #16213e 100%);
+  border-radius: 20px;
   overflow: hidden;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 18px;
+    padding: 2px;
+    background: linear-gradient(45deg, 
+      rgba(0, 255, 255, 0.3) 0%, 
+      rgba(255, 0, 255, 0.3) 25%,
+      rgba(0, 255, 127, 0.3) 50%,
+      rgba(255, 215, 0, 0.3) 75%,
+      rgba(0, 255, 255, 0.3) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    z-index: 1;
+    animation: borderPulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes borderPulse {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.3) saturate(1.2);
+  }
 }
 
 .three-canvas {
@@ -660,6 +695,8 @@ onUnmounted(() => {
   height: 100%;
   display: block;
   cursor: grab;
+  position: relative;
+  z-index: 2;
   
   &:active {
     cursor: grabbing;
@@ -672,27 +709,67 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(247, 249, 250, 0.9);
+  background: linear-gradient(145deg, rgba(10, 15, 28, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 10;
   
   p {
-    margin-top: $space-4;
-    color: $color-text-secondary;
-    font-size: $font-size-sm;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    animation: textGlow 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes textGlow {
+  from {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.4);
   }
 }
 
 .loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid $color-border;
-  border-top: 3px solid $color-primary;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid transparent;
   border-radius: 50%;
+  position: relative;
   animation: spin 1s linear infinite;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top: 4px solid #00ffff;
+    animation: spin 1.5s linear infinite reverse;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top: 3px solid #ff00ff;
+    animation: spin 0.8s linear infinite;
+  }
 }
 
 @keyframes spin {
@@ -702,141 +779,288 @@ onUnmounted(() => {
 
 .canvas-controls {
   position: absolute;
-  top: $space-4;
-  right: $space-4;
+  top: 20px;
+  right: 20px;
   display: flex;
-  gap: $space-2;
-  z-index: 3;
+  gap: 12px;
+  z-index: 5;
 }
 
 .control-group {
   display: flex;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: $radius-lg;
-  padding: $space-1;
-  box-shadow: $shadow-sm;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(45deg, 
+      rgba(0, 255, 255, 0.1) 0%, 
+      rgba(255, 0, 255, 0.1) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
 }
 
 .control-btn {
-  @include button-reset;
-  padding: $space-2;
-  border-radius: $radius-md;
-  color: $color-text-secondary;
-  transition: all $duration-fast $ease-out;
+  border: none;
+  background: transparent;
+  padding: 12px;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+      rgba(0, 255, 255, 0.2) 0%, 
+      rgba(255, 0, 255, 0.2) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
+  }
   
   &:hover {
-    background: $color-surface-variant;
-    color: $color-text-primary;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+    
+    &::before {
+      opacity: 1;
+    }
   }
   
   &.active {
-    background: $color-primary;
-    color: $color-text-on-primary;
+    color: #ffffff;
+    background: linear-gradient(45deg, #00ffff 0%, #ff00ff 100%);
+    box-shadow: 
+      0 4px 20px rgba(0, 255, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    
+    &::before {
+      opacity: 0;
+    }
   }
 }
 
 .info-panel {
   position: absolute;
-  bottom: $space-4;
-  left: $space-4;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: $radius-lg;
-  padding: $space-4;
-  min-width: 250px;
-  box-shadow: $shadow-lg;
-  z-index: 3;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  min-width: 280px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  z-index: 5;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    background: linear-gradient(45deg, 
+      rgba(0, 255, 255, 0.1) 0%, 
+      rgba(255, 0, 255, 0.1) 50%,
+      rgba(0, 255, 127, 0.1) 100%
+    );
+    opacity: 0.5;
+    z-index: -1;
+  }
   
   h4 {
-    margin: 0 0 $space-3 0;
-    color: $color-text-primary;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
+    margin: 0 0 16px 0;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
   }
   
   .close-btn {
-    @include button-reset;
     position: absolute;
-    top: $space-2;
-    right: $space-2;
-    padding: $space-1;
-    border-radius: $radius-sm;
-    color: $color-text-secondary;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
     
     &:hover {
-      background: $color-surface-variant;
-      color: $color-text-primary;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
     }
   }
 }
 
 .info-grid {
   display: grid;
-  gap: $space-2;
+  gap: 12px;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
   
   label {
-    color: $color-text-secondary;
-    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
   }
   
   span {
-    font-weight: $font-weight-medium;
+    font-weight: 600;
+    font-size: 15px;
     
     &.pressure-normal {
-      color: $color-success;
+      color: #00ff80;
+      text-shadow: 0 0 8px rgba(0, 255, 128, 0.5);
     }
     
     &.pressure-medium {
-      color: $color-warning;
+      color: #ffdd00;
+      text-shadow: 0 0 8px rgba(255, 221, 0, 0.5);
     }
     
     &.pressure-high {
-      color: $color-error;
+      color: #ff4444;
+      text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
     }
   }
 }
 
 .stats-panel {
   position: absolute;
-  top: $space-4;
-  left: $space-4;
+  top: 20px;
+  left: 20px;
   background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: $space-2;
-  border-radius: $radius-md;
-  font-family: $font-family-mono;
-  font-size: $font-size-xs;
-  z-index: 3;
+  backdrop-filter: blur(20px);
+  color: #00ffff;
+  padding: 16px;
+  border-radius: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  z-index: 5;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 
+    0 4px 20px rgba(0, 255, 255, 0.2),
+    inset 0 1px 0 rgba(0, 255, 255, 0.1);
   
   div {
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
+// Hover effects for interactive elements
+.three-canvas:hover + .canvas-controls .control-group {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
 // Responsive adjustments
-@media (max-width: $breakpoint-md) {
+@media (max-width: 768px) {
   .canvas-controls {
-    top: $space-2;
-    right: $space-2;
-    gap: $space-1;
+    top: 12px;
+    right: 12px;
+    gap: 8px;
   }
   
-  .info-panel {
-    bottom: $space-2;
-    left: $space-2;
-    right: $space-2;
-    min-width: auto;
+  .control-group {
+    padding: 6px;
   }
   
   .control-btn {
-    padding: $space-1;
+    padding: 10px;
+  }
+  
+  .info-panel {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    min-width: auto;
+    padding: 20px;
+  }
+  
+  .stats-panel {
+    top: 12px;
+    left: 12px;
+    padding: 12px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pipeline-canvas {
+    border-radius: 16px;
+  }
+  
+  .canvas-controls {
+    top: 8px;
+    right: 8px;
+  }
+  
+  .info-panel {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 16px;
+  }
+  
+  .stats-panel {
+    top: 8px;
+    left: 8px;
+    padding: 10px;
   }
 }
 </style> 

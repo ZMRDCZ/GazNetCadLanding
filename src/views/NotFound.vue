@@ -108,11 +108,11 @@
               </div>
             </router-link>
             
-            <router-link to="/pricing" class="quick-link">
-              <div class="link-icon">💰</div>
+            <router-link to="/about" class="quick-link">
+              <div class="link-icon">ℹ️</div>
               <div class="link-content">
-                <h4>Тарифы</h4>
-                <p>Выбрать подходящий план</p>
+                <h4>О нас</h4>
+                <p>Узнать больше о системе</p>
               </div>
             </router-link>
             
@@ -136,7 +136,7 @@
               <div class="link-icon">ℹ️</div>
               <div class="link-content">
                 <h4>О нас</h4>
-                <p>Узнать больше о компании</p>
+                <p>Узнать больше о системе</p>
               </div>
             </router-link>
           </div>

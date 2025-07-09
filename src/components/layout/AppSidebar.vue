@@ -161,43 +161,51 @@ const connectionStatusText = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 @import '@/styles/tokens.scss';
 
 .app-sidebar {
   position: fixed;
   left: 0;
-  top: $header-height + $demo-banner-height;
+  top: 70px; // Match header height
   bottom: 0;
-  width: $sidebar-width;
-  @include glassmorphism;
-  @include neon-border;
-  border-top: none;
-  border-left: none;
-  transition: all $duration-normal $ease-out;
-  z-index: $z-sticky;
+  width: 280px;
+  @include glass-effect(0.98);
+  border-right: 1px solid rgba($primary, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 40;
   display: flex;
   flex-direction: column;
+  box-shadow: $shadow-xl;
   
+  // Minimal accent border
   &::before {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    width: 2px;
-    background: linear-gradient(180deg, $color-primary, $color-secondary, $color-accent);
+    width: 1px;
+    background: linear-gradient(180deg, 
+      transparent 0%,
+      rgba($primary, 0.4) 25%, 
+      rgba($secondary, 0.4) 75%, 
+      transparent 100%);
   }
   
   &.collapsed {
-    width: $sidebar-width-collapsed;
+    width: 80px;
     
     .nav-title {
       opacity: 0;
       pointer-events: none;
+      transform: translateX(-20px);
     }
     
     .nav-text {
       opacity: 0;
+      transform: translateX(-20px);
       pointer-events: none;
     }
     
@@ -259,47 +267,64 @@ const connectionStatusText = computed(() => {
 }
 
 .nav-item {
-  margin-bottom: $space-1;
+  margin-bottom: $space-2;
   
   &.active {
     .nav-link {
-      background: rgba($color-primary, 0.15);
-      @include neon-border($color-primary);
-      color: $color-primary;
-      @include neon-glow($color-primary, 0.2);
+      background: rgba($primary, 0.15);
+      border: 1px solid rgba($primary, 0.6);
+      color: $primary;
+      @include subtle-glow($primary, 0.2);
+      transform: translateX(4px);
       
       .nav-icon {
-        color: $color-primary;
-        animation: neon-pulse $neon-pulse-duration infinite;
+        color: $primary;
+        transform: scale(1.05);
+      }
+      
+      .nav-text {
+        font-weight: $font-semibold;
+        color: $primary;
       }
     }
   }
 }
 
 .nav-link {
-  @include button-base;
   width: 100%;
   display: flex;
   align-items: center;
   gap: $space-3;
-  padding: $space-3;
-  border-radius: $radius-lg;
-  color: $color-text-secondary;
+  padding: $space-3 $space-4;
+  border-radius: $radius-xl;
+  color: $dark-text-secondary;
   text-align: left;
   position: relative;
-  transition: all $duration-normal $ease-out;
-  @include glassmorphism;
+  background: rgba($dark-surface-2, 0.4);
   border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:hover {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border-color: rgba($color-primary, 0.3);
-    transform: translateX(4px);
+    background: rgba($dark-surface-2, 0.8);
+    color: $primary;
+    border-color: rgba($primary, 0.3);
+    transform: translateX(2px);
+    box-shadow: $shadow-md;
     
     .nav-icon {
-      transform: scale(1.1);
+      transform: scale(1.05);
+      color: $primary;
     }
+    
+    .nav-text {
+      color: $primary;
+    }
+  }
+  
+  &:focus-visible {
+    @include focus-ring($primary);
   }
 }
 
@@ -499,13 +524,64 @@ const connectionStatusText = computed(() => {
   }
 }
 
-/* Responsive */
-@media (max-width: $breakpoint-md) {
+@keyframes iconPulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 4px currentColor); 
+    transform: scale(1.1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 20px currentColor); 
+    transform: scale(1.15);
+  }
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 0% 100%; }
+}
+
+/* Enhanced Mobile Responsive */
+@media (max-width: 768px) {
   .app-sidebar {
     transform: translateX(-100%);
+    width: 280px;
+    box-shadow: 
+      8px 0 30px rgba(0, 0, 0, 0.3),
+      4px 0 12px rgba(0, 0, 0, 0.15);
     
     &:not(.collapsed) {
       transform: translateX(0);
+    }
+    
+    // Mobile overlay
+    &::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      right: -100vw;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    
+    &:not(.collapsed)::after {
+      right: -280px;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .app-sidebar {
+    width: 260px;
+    
+    &:not(.collapsed)::after {
+      right: -260px;
     }
   }
 }

@@ -11,8 +11,10 @@
     "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "deploy": "npm run build && gh-pages -d dist",
-    "build:gh-pages": "NODE_ENV=production npm run build"
+    "deploy": "npm run build:gh-pages && node deploy.js",
+    "deploy:cjs": "npm run build:gh-pages && node deploy.cjs",
+    "deploy:ps": "powershell -ExecutionPolicy Bypass -File deploy.ps1",
+    "build:gh-pages": "cross-env NODE_ENV=production npm run build"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.0.2",
@@ -20,6 +22,7 @@
     "@vueuse/motion": "^2.0.0",
     "chart.js": "^4.4.0",
     "gsap": "^3.12.2",
+    "html2canvas": "^1.4.1",
     "lucide-vue-next": "^0.294.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
@@ -33,9 +36,11 @@
     "@playwright/test": "^1.40.0",
     "@storybook/vue3": "^7.6.0",
     "@storybook/vue3-vite": "^7.6.0",
+    "@types/html2canvas": "^0.5.35",
     "@types/node": "^20.10.0",
     "@types/three": "^0.159.0",
     "@vitejs/plugin-vue": "^4.5.2",
+    "cross-env": "^7.0.3",
     "gh-pages": "^6.3.0",
     "sass": "^1.69.5",
     "typescript": "^5.3.3",

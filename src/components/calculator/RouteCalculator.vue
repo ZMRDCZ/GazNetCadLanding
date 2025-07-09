@@ -426,266 +426,327 @@ watch(() => props.routePoints, (newPoints) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/tokens.scss";
+@import '@/styles/tokens.scss';
 
 .route-calculator {
-  background: $color-surface;
-  border-radius: $radius-lg;
-  padding: $space-6;
-  border: 1px solid $color-border;
-  
   @include glassmorphism;
+  border-radius: $radius-xl;
+  border: 1px solid rgba($color-primary, 0.2);
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      $color-primary 0%, 
+      $color-secondary 50%, 
+      $color-accent 100%);
+  }
 }
 
 .calculator-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: $space-6;
+  align-items: center;
+  padding: $space-6 $space-6 $space-4;
+  border-bottom: 1px solid rgba($color-border, 0.3);
   
   .calculator-title {
-    font-size: $font-size-lg;
+    margin: 0;
+    font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
     color: $color-text-primary;
-    margin: 0;
+    text-shadow: 0 0 10px rgba($color-primary, 0.3);
+  }
+}
+
+.calculation-status {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
   }
   
-  .calculation-status {
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-    font-size: $font-size-sm;
+  &.status-ready {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
     
     .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: $color-text-tertiary;
-    }
-    
-    &.pending .status-dot {
-      background: $color-text-tertiary;
-    }
-    
-    &.calculating .status-dot {
-      background: $color-warning;
-      animation: pulse 1.5s infinite;
-    }
-    
-    &.completed .status-dot {
       background: $color-success;
+      box-shadow: 0 0 10px $color-success;
     }
+  }
+  
+  &.status-calculating {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 1px solid rgba($color-warning, 0.3);
     
-    &.error .status-dot {
+    .status-dot {
+      background: $color-warning;
+      box-shadow: 0 0 10px $color-warning;
+    }
+  }
+  
+  &.status-error {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+    
+    .status-dot {
       background: $color-error;
+      box-shadow: 0 0 10px $color-error;
     }
   }
 }
 
 .route-section {
+  padding: $space-6;
+  
   & + .route-section {
-    margin-top: $space-6;
-    padding-top: $space-6;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid rgba($color-border, 0.3);
   }
   
   .section-title {
-    font-size: $font-size-md;
+    margin: 0 0 $space-4 0;
+    font-size: $font-size-lg;
     font-weight: $font-weight-medium;
     color: $color-text-primary;
-    margin: 0 0 $space-4 0;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(45deg, $color-primary, $color-secondary);
+      border-radius: $radius-sm;
+    }
   }
 }
 
 .route-points {
   .route-point {
-    background: $color-surface-elevated;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
+    background: rgba($color-surface-elevated, 0.8);
+    border: 1px solid rgba($color-border, 0.3);
+    border-radius: $radius-lg;
     margin-bottom: $space-3;
-    cursor: pointer;
-    transition: all $duration-fast;
+    overflow: hidden;
+    transition: all $duration-normal ease;
     
     &:hover {
-      border-color: $color-primary-light;
+      border-color: rgba($color-primary, 0.5);
+      box-shadow: 0 4px 20px rgba($color-primary, 0.1);
+      transform: translateY(-2px);
     }
     
     &.active {
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px $color-primary-light;
+      box-shadow: $shadow-neon-sm;
+      background: rgba($color-primary, 0.05);
     }
+  }
+  
+  .point-header {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4;
+    cursor: pointer;
     
-    .point-header {
+    .point-number {
       display: flex;
       align-items: center;
-      gap: $space-3;
-      padding: $space-3;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(45deg, $color-primary, $color-secondary);
+      color: white;
+      border-radius: 50%;
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-sm;
+      box-shadow: 0 2px 10px rgba($color-primary, 0.3);
+    }
+    
+    .point-info {
+      flex: 1;
       
-      .point-number {
-        width: 24px;
-        height: 24px;
-        background: $color-primary;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .point-name {
+        display: block;
+        font-weight: $font-weight-medium;
+        color: $color-text-primary;
+        margin-bottom: 2px;
+      }
+      
+      .point-coords {
         font-size: $font-size-sm;
-        font-weight: $font-weight-bold;
-        flex-shrink: 0;
-      }
-      
-      .point-info {
-        flex: 1;
-        
-        .point-name {
-          display: block;
-          font-weight: $font-weight-medium;
-          color: $color-text-primary;
-        }
-        
-        .point-coords {
-          display: block;
-          font-size: $font-size-sm;
-          color: $color-text-secondary;
-        }
-      }
-      
-      .remove-point {
-        @include button-base;
-        padding: $space-1;
         color: $color-text-secondary;
-        border-radius: $radius-sm;
-        
-        &:hover {
-          background: $color-error-light;
-          color: $color-error;
-        }
+        font-family: $font-family-mono;
       }
     }
     
-    .point-details {
-      padding: $space-3;
-      border-top: 1px solid $color-border;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: $space-3;
+    .remove-point {
+      @include button-base;
+      padding: $space-2;
+      color: $color-text-secondary;
+      border-radius: $radius-md;
+      transition: all $duration-fast ease;
       
-      .detail-group {
-        .detail-label {
-          display: block;
-          font-size: $font-size-sm;
-          font-weight: $font-weight-medium;
-          color: $color-text-secondary;
-          margin-bottom: $space-1;
-        }
+      &:hover {
+        color: $color-error;
+        background: rgba($color-error, 0.1);
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  .point-details {
+    padding: 0 $space-4 $space-4;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $space-3;
+    
+    .detail-group {
+      .detail-label {
+        display: block;
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        margin-bottom: $space-1;
+        font-weight: $font-weight-medium;
+      }
+      
+      .detail-input,
+      .detail-select {
+        width: 100%;
+        padding: $space-3;
+        border: 1px solid rgba($color-border, 0.5);
+        border-radius: $radius-md;
+        background: rgba($color-surface, 0.8);
+        color: $color-text-primary;
+        font-size: $font-size-sm;
+        transition: all $duration-normal ease;
         
-        .detail-input,
-        .detail-select {
-          width: 100%;
-          padding: $space-2;
-          border: 1px solid $color-border;
-          border-radius: $radius-sm;
-          background: $color-surface;
-          color: $color-text-primary;
-          font-size: $font-size-sm;
-          
-          &:focus {
-            outline: none;
-            border-color: $color-primary;
-          }
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
         }
       }
     }
   }
   
   .add-point-btn {
+    @include button-base;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: $space-2;
+    padding: $space-4;
     width: 100%;
-    padding: $space-3;
-    border: 2px dashed $color-border;
-    border-radius: $radius-md;
-    background: none;
-    color: $color-text-secondary;
-    font-size: $font-size-sm;
-    cursor: pointer;
-    transition: all $duration-fast;
+    border: 2px dashed rgba($color-primary, 0.3);
+    border-radius: $radius-lg;
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+    transition: all $duration-normal ease;
     
     &:hover {
       border-color: $color-primary;
-      color: $color-primary;
-      background: $color-primary-light;
+      background: rgba($color-primary, 0.05);
+      box-shadow: $shadow-neon-sm;
     }
   }
 }
 
 .route-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: $space-4;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $space-3;
   
   .stat-item {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-4;
+    background: rgba($color-surface-elevated, 0.8);
+    border: 1px solid rgba($color-border, 0.3);
+    border-radius: $radius-lg;
     
     .stat-label {
-      display: block;
-      font-size: $font-size-sm;
       color: $color-text-secondary;
-      margin-bottom: $space-1;
+      font-size: $font-size-sm;
     }
     
     .stat-value {
-      display: block;
-      font-size: $font-size-lg;
-      font-weight: $font-weight-semibold;
       color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      font-family: $font-family-mono;
     }
   }
 }
 
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: $space-4;
   
   .result-item {
     display: flex;
     align-items: center;
     gap: $space-3;
-    padding: $space-3;
-    background: $color-surface-elevated;
-    border-radius: $radius-md;
-    border: 1px solid $color-border;
+    padding: $space-4;
+    background: rgba($color-surface-elevated, 0.8);
+    border: 1px solid rgba($color-border, 0.3);
+    border-radius: $radius-lg;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(45deg, $color-primary, $color-secondary);
+    }
     
     .result-icon {
-      width: 40px;
-      height: 40px;
+      padding: $space-2;
       border-radius: $radius-md;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       
       &.pressure {
-        background: $color-primary-light;
+        background: rgba($color-primary, 0.1);
         color: $color-primary;
       }
       
       &.flow {
-        background: $color-success-light;
-        color: $color-success;
+        background: rgba($color-secondary, 0.1);
+        color: $color-secondary;
       }
       
       &.velocity {
-        background: $color-warning-light;
-        color: $color-warning;
+        background: rgba($color-accent, 0.1);
+        color: $color-accent;
       }
       
       &.losses {
-        background: $color-error-light;
-        color: $color-error;
+        background: rgba($color-warning, 0.1);
+        color: $color-warning;
       }
     }
     
@@ -696,13 +757,14 @@ watch(() => props.routePoints, (newPoints) => {
         display: block;
         font-size: $font-size-sm;
         color: $color-text-secondary;
+        margin-bottom: 2px;
       }
       
       .result-value {
-        display: block;
-        font-size: $font-size-md;
+        font-size: $font-size-lg;
         font-weight: $font-weight-semibold;
         color: $color-text-primary;
+        font-family: $font-family-mono;
       }
     }
   }
@@ -711,50 +773,59 @@ watch(() => props.routePoints, (newPoints) => {
 .calculator-actions {
   display: flex;
   gap: $space-3;
-  margin-top: $space-6;
+  padding: $space-6;
+  border-top: 1px solid rgba($color-border, 0.3);
   
   .btn {
+    @include button-base;
     display: flex;
     align-items: center;
     gap: $space-2;
-    padding: $space-3 $space-4;
-    border-radius: $radius-md;
-    font-size: $font-size-sm;
+    padding: $space-3 $space-6;
+    border-radius: $radius-lg;
     font-weight: $font-weight-medium;
-    border: 1px solid;
-    cursor: pointer;
-    transition: all $duration-fast;
+    transition: all $duration-normal ease;
     
     &.btn-primary {
-      background: $color-primary;
+      background: linear-gradient(45deg, $color-primary, $color-secondary);
       color: white;
-      border-color: $color-primary;
+      border: none;
+      box-shadow: $shadow-md;
       
       &:hover:not(:disabled) {
-        background: darken($color-primary, 5%);
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg, $shadow-neon-md;
       }
       
       &:disabled {
         opacity: 0.6;
         cursor: not-allowed;
+        transform: none;
       }
     }
     
     &.btn-secondary {
-      background: $color-surface-elevated;
+      background: rgba($color-surface-elevated, 0.8);
       color: $color-text-primary;
-      border-color: $color-border;
+      border: 1px solid rgba($color-border, 0.5);
       
       &:hover {
-        background: $color-surface-hover;
-        border-color: $color-text-secondary;
+        border-color: $color-primary;
+        background: rgba($color-primary, 0.05);
+        box-shadow: $shadow-md;
       }
     }
   }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
 }
 </style> 

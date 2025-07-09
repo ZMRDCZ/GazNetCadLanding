@@ -213,8 +213,8 @@ $focus-ring: 0 0 0 3px rgba(0, 212, 255, 0.3);
 $neon-glow: 0 0 20px rgba(0, 212, 255, 0.5);
 
 // Mixins for common patterns
-@mixin glassmorphism {
-  background: $glass-background;
+@mixin glassmorphism($opacity: 0.05) {
+  background: rgba(255, 255, 255, $opacity);
   backdrop-filter: $glass-backdrop-filter;
   border: 1px solid $glass-border;
   box-shadow: $glass-shadow;
@@ -388,6 +388,6 @@ $neon-glow: 0 0 20px rgba(0, 212, 255, 0.5);
 }
 
 // Glass effect utility — thin wrapper around glassmorphism
-@mixin glass-effect {
-  @include glassmorphism;
+@mixin glass-effect($opacity: 0.05) {
+  @include glassmorphism($opacity);
 } 

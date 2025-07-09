@@ -359,76 +359,132 @@ watch([
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/tokens.scss';
+
 .normative-controls {
-  background: $color-surface;
-  border-radius: $radius-lg;
-  padding: $space-6;
-  border: 1px solid $color-border;
-  
   @include glassmorphism;
+  border-radius: $radius-xl;
+  border: 1px solid rgba($color-primary, 0.2);
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      $color-primary 0%, 
+      $color-secondary 50%, 
+      $color-tertiary 100%);
+  }
 }
 
 .controls-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: $space-6;
+  align-items: center;
+  padding: $space-6 $space-6 $space-4;
+  border-bottom: 1px solid rgba($color-border, 0.3);
   
   .controls-title {
-    font-size: $font-size-lg;
+    margin: 0;
+    font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
     color: $color-text-primary;
-    margin: 0;
+    text-shadow: 0 0 10px rgba($color-primary, 0.3);
+  }
+}
+
+.standard-indicator {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border: 1px solid;
+  
+  .indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
   }
   
-  .standard-indicator {
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-    font-size: $font-size-sm;
+  &.standard-sp {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-color: rgba($color-primary, 0.3);
     
     .indicator-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: $color-success;
+      background: $color-primary;
+      box-shadow: 0 0 10px $color-primary;
     }
+  }
+  
+  &.standard-gost {
+    background: rgba($color-secondary, 0.1);
+    color: $color-secondary;
+    border-color: rgba($color-secondary, 0.3);
     
-    &.warning .indicator-dot {
-      background: $color-warning;
+    .indicator-dot {
+      background: $color-secondary;
+      box-shadow: 0 0 10px $color-secondary;
     }
+  }
+  
+  &.standard-snip {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+    border-color: rgba($color-accent, 0.3);
     
-    &.invalid .indicator-dot {
-      background: $color-error;
+    .indicator-dot {
+      background: $color-accent;
+      box-shadow: 0 0 10px $color-accent;
     }
   }
 }
 
 .parameters-section {
-  & + .parameters-section {
-    margin-top: $space-6;
-    padding-top: $space-6;
-    border-top: 1px solid $color-border;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+  
+  &:last-child {
+    border-bottom: none;
   }
   
   .section-title {
-    font-size: $font-size-md;
-    font-weight: $font-weight-medium;
-    color: $color-text-primary;
     margin: 0 0 $space-4 0;
+    padding: $space-4 $space-6 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(45deg, $color-secondary, $color-tertiary);
+      border-radius: $radius-sm;
+    }
   }
 }
 
 .control-group {
-  & + .control-group {
-    margin-top: $space-4;
-  }
+  padding: $space-4 $space-6;
   
   .control-label {
     display: block;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-text-secondary;
+    color: $color-text-primary;
     margin-bottom: $space-2;
     
     &.checkbox-label {
@@ -436,92 +492,215 @@ watch([
       align-items: center;
       gap: $space-2;
       cursor: pointer;
+      padding: $space-3;
+      border-radius: $radius-md;
+      transition: all $duration-fast ease;
       
-      .control-checkbox {
-        margin: 0;
+      &:hover {
+        background: rgba($color-primary, 0.05);
       }
     }
   }
   
-  .control-input,
   .control-select {
     width: 100%;
     padding: $space-3;
-    border: 1px solid $color-border;
+    border: 1px solid rgba($color-border, 0.5);
     border-radius: $radius-md;
-    background: $color-surface-elevated;
+    background: rgba($color-surface, 0.8);
     color: $color-text-primary;
     font-size: $font-size-sm;
-    transition: all $duration-fast;
+    transition: all $duration-normal ease;
+    cursor: pointer;
     
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px $color-primary-light;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1), $shadow-neon-sm;
     }
     
-    &:read-only {
-      background: $color-surface;
-      color: $color-text-tertiary;
+    &:hover {
+      border-color: rgba($color-primary, 0.7);
     }
   }
   
   .input-group {
     display: flex;
     align-items: center;
+    position: relative;
     
     .control-input {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-right: none;
+      flex: 1;
+      padding: $space-3;
+      border: 1px solid rgba($color-border, 0.5);
+      border-radius: $radius-md;
+      background: rgba($color-surface, 0.8);
+      color: $color-text-primary;
+      font-size: $font-size-sm;
+      font-family: $font-family-mono;
+      transition: all $duration-normal ease;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1), $shadow-neon-sm;
+      }
+      
+      &:hover {
+        border-color: rgba($color-primary, 0.7);
+      }
+      
+      &[readonly] {
+        background: rgba($color-surface-elevated, 0.5);
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
     }
     
     .input-unit {
-      background: $color-surface-elevated;
-      border: 1px solid $color-border;
-      border-left: none;
-      border-top-right-radius: $radius-md;
-      border-bottom-right-radius: $radius-md;
-      padding: $space-3;
+      position: absolute;
+      right: $space-3;
       font-size: $font-size-sm;
       color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+      background: rgba($color-surface-elevated, 0.8);
+      padding: $space-1 $space-2;
+      border-radius: $radius-sm;
+      border: 1px solid rgba($color-border, 0.3);
+    }
+  }
+  
+  .control-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba($color-border, 0.5);
+    border-radius: $radius-sm;
+    background: rgba($color-surface, 0.8);
+    cursor: pointer;
+    position: relative;
+    transition: all $duration-normal ease;
+    
+    &:checked {
+      background: linear-gradient(45deg, $color-primary, $color-secondary);
+      border-color: $color-primary;
+      
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
     }
   }
   
   .param-range {
     font-size: $font-size-xs;
-    color: $color-text-tertiary;
+    color: $color-text-secondary;
     margin-top: $space-1;
+    font-style: italic;
   }
 }
 
 .safety-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: $space-4;
   
   .safety-item {
     .control-label {
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $color-text-secondary;
       margin-bottom: $space-2;
+    }
+    
+    .control-input {
+      width: 100%;
+      padding: $space-3;
+      border: 1px solid rgba($color-border, 0.5);
+      border-radius: $radius-md;
+      background: rgba($color-surface, 0.8);
+      color: $color-text-primary;
+      font-size: $font-size-sm;
+      font-family: $font-family-mono;
+      font-weight: $font-weight-semibold;
+      text-align: center;
+      transition: all $duration-normal ease;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1), $shadow-neon-sm;
+      }
+      
+      &[readonly] {
+        background: linear-gradient(45deg, 
+          rgba($color-primary, 0.1), 
+          rgba($color-secondary, 0.1));
+        border-color: rgba($color-primary, 0.3);
+        cursor: not-allowed;
+      }
     }
   }
 }
 
 .validation-errors {
-  margin-top: $space-4;
+  padding: $space-4 $space-6 $space-6;
   
   .error-message {
     display: flex;
     align-items: center;
     gap: $space-2;
+    padding: $space-3;
+    margin-bottom: $space-2;
+    background: rgba($color-error, 0.1);
+    border: 1px solid rgba($color-error, 0.3);
+    border-radius: $radius-md;
     color: $color-error;
     font-size: $font-size-sm;
-    background: $color-error-light;
-    padding: $space-2 $space-3;
-    border-radius: $radius-md;
     
-    & + .error-message {
-      margin-top: $space-2;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    svg {
+      flex-shrink: 0;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+// Responsive design
+@media (max-width: $breakpoint-md) {
+  .safety-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-group {
+    .input-unit {
+      position: static;
+      margin-left: $space-2;
+      margin-top: $space-1;
     }
   }
 }

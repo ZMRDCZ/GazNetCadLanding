@@ -276,66 +276,97 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 @import '@/styles/tokens.scss';
 
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: $header-height;
-  @include glassmorphism;
-  padding: 0 $space-6;
-  @include neon-border;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  position: relative;
-  z-index: $z-sticky;
+  min-height: 70px;
+  @include glass-effect(0.95);
+  padding: 0 clamp($space-4, 4vw, $space-8);
+  border-bottom: 1px solid rgba($primary, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: $shadow-lg;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
+  // Minimal accent line
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, $color-primary, $color-secondary, $color-accent);
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      rgba($primary, 0.6) 25%, 
+      rgba($secondary, 0.6) 75%, 
+      transparent 100%);
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    min-height: 60px;
+    padding: 0 $space-4;
+  }
+  
+  @media (max-width: 640px) {
+    flex-wrap: wrap;
+    min-height: auto;
+    padding: $space-3 $space-4;
   }
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: $space-4;
+  gap: clamp($space-2, 3vw, $space-4);
+  flex: 1;
+  min-width: 0; // Allows flex children to shrink
+  
+  @media (max-width: 640px) {
+    width: 100%;
+    order: 1;
+    justify-content: space-between;
+    margin-bottom: $space-2;
+  }
 }
 
 .sidebar-toggle {
-  @include button-base;
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-lg;
-  @include glassmorphism;
-  @include neon-border;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-text-secondary;
-  transition: all $duration-normal $ease-out;
+  @include modern-button($gray-600);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba($dark-surface-2, 0.8);
+  color: $dark-text-secondary;
+  border: 1px solid rgba($gray-600, 0.4);
   
   &:hover {
-    @include neon-glow;
-    color: $color-primary;
-    transform: scale(1.05);
+    background: rgba($dark-surface-2, 1);
+    border-color: rgba($primary, 0.6);
+    color: $primary;
+    box-shadow: $shadow-md, $shadow-primary;
+  }
+  
+  &:focus-visible {
+    @include focus-ring($primary);
   }
   
   &.active {
-    @include neon-glow($color-secondary);
-    color: $color-secondary;
-    border-color: $color-secondary;
+    background: rgba($primary, 0.1);
+    border-color: $primary;
+    color: $primary;
+    box-shadow: $shadow-md, $shadow-primary;
   }
   
   .toggle-icon {
-    font-size: $font-size-lg;
+    font-size: $text-lg;
+    font-weight: $font-bold;
   }
 }
 
@@ -349,19 +380,37 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: $space-2;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
   
   .logo-icon {
-    font-size: $font-size-xl;
-    color: $color-primary;
-    animation: neon-pulse $neon-pulse-duration infinite;
+    font-size: $text-2xl;
+    @include text-gradient;
+    animation: subtleGlow 4s ease-in-out infinite;
   }
   
   .logo-text {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    @include neon-text($color-primary);
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    @include text-gradient;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: $tracking-wide;
+    
+    @media (max-width: 480px) {
+      font-size: $text-lg;
+    }
+  }
+}
+
+@keyframes subtleGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 2px rgba($primary, 0.3));
+  }
+  50% { 
+    filter: drop-shadow(0 0 8px rgba($primary, 0.6));
   }
 }
 
