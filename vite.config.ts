@@ -52,5 +52,10 @@ export default defineConfig({
     host: true,
     port: 3000
   },
-  base: process.env.NODE_ENV === 'production' ? '/GazNetCadLanding/' : '/'
-}) 
+  // Always use the repository name as the base path so that assets
+  // resolve correctly when deployed to GitHub Pages. Using a
+  // conditional here caused wrong asset URLs in some environments
+  // which resulted in errors like:
+  // "Failed to fetch dynamically imported module".
+  base: '/GazNetCadLanding/'
+})

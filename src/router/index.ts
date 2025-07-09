@@ -1,12 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import Landing from '@/views/Landing.vue'
+import Demo from '@/views/Demo.vue'
+import Dashboard from '@/views/Dashboard.vue'
+import ProjectManager from '@/views/ProjectManager.vue'
+import Settings from '@/views/Settings.vue'
+import About from '@/views/About.vue'
+import Documentation from '@/views/Documentation.vue'
+import Contact from '@/views/Contact.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
       name: 'landing',
-      component: () => import('@/views/Landing.vue'),
+      component: Landing,
       meta: {
         title: 'GazNetCAD - Демонстрация проектирования газовых сетей'
       }
@@ -14,7 +22,7 @@ const router = createRouter({
     {
       path: '/demo',
       name: 'demo',
-      component: () => import('@/views/Demo.vue'),
+      component: Demo,
       meta: {
         title: 'GazNetCAD - Калькулятор трубопровода',
         requiresDemo: true
@@ -23,7 +31,7 @@ const router = createRouter({
     {
       path: '/app',
       name: 'app',
-      component: () => import('@/views/Dashboard.vue'),
+      component: Dashboard,
       meta: {
         title: 'GazNetCAD - Проектирование трубопроводов',
         requiresAuth: true
@@ -32,7 +40,7 @@ const router = createRouter({
     {
       path: '/projects',
       name: 'projects',
-      component: () => import('@/views/ProjectManager.vue'),
+      component: ProjectManager,
       meta: {
         title: 'GazNetCAD - Управление проектами',
         requiresAuth: true
@@ -41,7 +49,7 @@ const router = createRouter({
     {
       path: '/settings',
       name: 'settings',
-      component: () => import('@/views/Settings.vue'),
+      component: Settings,
       meta: {
         title: 'GazNetCAD - Настройки',
         requiresAuth: true
@@ -50,7 +58,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('@/views/About.vue'),
+      component: About,
       meta: {
         title: 'GazNetCAD - О нас'
       }
@@ -58,7 +66,7 @@ const router = createRouter({
     {
       path: '/documentation',
       name: 'documentation',
-      component: () => import('@/views/Documentation.vue'),
+      component: Documentation,
       meta: {
         title: 'GazNetCAD - Документация'
       }
@@ -66,7 +74,7 @@ const router = createRouter({
     {
       path: '/contact',
       name: 'contact',
-      component: () => import('@/views/Contact.vue'),
+      component: Contact,
       meta: {
         title: 'GazNetCAD - Контакты'
       }
@@ -90,23 +98,6 @@ router.beforeEach((to, from, next) => {
   // Set page title
   if (to.meta.title) {
     document.title = to.meta.title as string
-  }
-
-  // Check for demo access
-  if (to.meta.requiresDemo) {
-    // In a real app, you might check for demo access token
-    console.log('Accessing demo mode')
-  }
-
-  // Check for authentication (placeholder for future implementation)
-  if (to.meta.requiresAuth) {
-    // For now, redirect to demo instead of blocking
-    // In a real app, you would check authentication status
-    console.log('Full app access required, redirecting to demo')
-    if (from.path !== '/demo') {
-      next('/demo')
-      return
-    }
   }
 
   next()
