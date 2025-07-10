@@ -475,6 +475,7 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
 .documentation-page {
   background: $color-background;
   min-height: 100vh;

@@ -23,6 +23,7 @@ import { Plus } from 'lucide-vue-next'
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
 .project-manager {
   padding: $space-6;
   

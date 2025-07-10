@@ -72,6 +72,7 @@ const resetSettings = () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
 .settings-view {
   padding: $space-6;
   max-width: 800px;

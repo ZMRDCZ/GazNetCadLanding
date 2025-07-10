@@ -332,6 +332,7 @@ const submitForm = async () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
 .contact-page {
   background: $color-background;
   min-height: 100vh;

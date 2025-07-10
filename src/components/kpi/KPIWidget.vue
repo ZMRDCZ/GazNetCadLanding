@@ -301,7 +301,7 @@ const iconComponent = computed(() => {
     
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, $primary, lighten($primary, 10%));
+      background: linear-gradient(90deg, $primary, color.adjust($primary, $lightness: 10%));
       border-radius: 3px;
       transition: width 0.8s ease;
     }

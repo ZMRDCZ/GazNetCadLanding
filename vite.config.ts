@@ -1,61 +1,42 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { fileURLToPath, URL } from 'node:url'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    AutoImport({
-      imports: [
-        'vue',
-        'vue-router',
-        'pinia',
-        '@vueuse/core'
-      ],
-      dts: true
-    }),
-    Components({
-      dts: true
-    })
-  ],
+  base: process.env.NODE_ENV === 'production' ? '/GazNetCadLanding/' : '/',
+  plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': '/src'
     }
   },
   css: {
+    devSourcemap: true,
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/tokens.scss";`
+        additionalData: `@import "./src/styles/variables.scss";`
       }
     }
   },
-  optimizeDeps: {
-    include: ['three', 'gsap']
-  },
   build: {
+    cssCodeSplit: false,
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        manualChunks: {
-          'three': ['three'],
-          'gsap': ['gsap'],
-          'vendor': ['vue', 'vue-router', 'pinia']
-        }
-      }
-    }
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name].[hash].css';
+          }
+          // Сохраняем оригинальные имена для изображений
+          if (assetInfo.name?.match(/\.(png|jpg|jpeg|gif|svg|webp)$/)) {
+            return 'assets/images/[name][extname]';
+          }
+          return 'assets/[name].[hash][extname]';
+        },
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
+      },
+    },
   },
-  server: {
-    host: true,
-    port: 3000
-  },
-  // Always use the repository name as the base path so that assets
-  // resolve correctly when deployed to GitHub Pages. Using a
-  // conditional here caused wrong asset URLs in some environments
-  // which resulted in errors like:
-  // "Failed to fetch dynamically imported module".
-  base: '/GazNetCadLanding/'
-})
+  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
+});
